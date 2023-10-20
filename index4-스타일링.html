@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>고양이 가라사대</title>
+  <style>
+    body {
+      text-align: center;
+    }
+    .main-card button {
+      position: relative;
+      left: -45px;
+      bottom: 15px;
+    }
+    .favorites {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    /* .favorites img {
+      width: 150px;
+    } */
+  </style>
+</head>
+<body>
+
+  <div id="app"></div>
+
+
+  <!-- Script CDN -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <script type="text/babel">
+
+    const Title = (props) => {
+      return(
+        <h1>{props.children}</h1>
+      );
+    };
+
+    const Form = () => {
+      return(
+        <form>
+          <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
+          <button type="submit">생성</button>
+        </form>
+      );
+    };
+
+    const CatItem = (props) => {
+      return(
+        <li>
+          <img src={props.img} style={{width:"150px"}} />  {/*수정*/}
+        </li>
+      );
+    };
+    
+    const Favorites = () => {
+      return(
+        <ul className="favorites">  {/*수정*/}
+          <CatItem img="https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/inflearn"/>
+          <CatItem img="https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript"/> 
+        </ul>
+      );
+    };
+
+    const MainCard = ({img}) => {
+      return(
+        <div className="main-card">  {/*수정*/}
+          <img src={img} alt="고양이" style={{width:"400px"}} /> {/*수정*/}
+          <button>🤍</button>
+        </div>
+      );
+    };
+
+    const app =(
+      <div>
+        <Title>1번째 고양이 가라사대</Title>
+        <Title>2번째 고양이 가라사대</Title>
+        <Form/>
+        <MainCard img="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react"/>
+        <Favorites/>
+      </div>
+    );
+
+    const cat = document.querySelector('#app');
+    ReactDOM.render(app, cat);
+  </script>
+</body>
+</html>
+
+<!-- 
+*jsx문법에서는
+
+(1)class 대신 className 을 사용해야 한다.
+<div className="main-card"></div>
+
+(2)인라인방식의 이벤트를 사용할때...
+<div className="main-card" onclick="sayHi()">
+<div className="main-card" onClick={sayHi}>
+
+(3)인라인스타일링
+<img src={props.img} style={{width:"150px", border:"1px solid red"}}/>
+
+▶스타일하는 트렌드(라이브러리)
+*Emotion : css 라는 프롭을 넘겨서 사용, 버튼을 만들때 버튼태그안에 css만 가지고 있는 컴포넌트를 만들어서 사용
+https://emotion.sh/docs/introduction
+
+*Tailwind CSS:클래스네임들을 미리 정의해놓은것
+https://tailwindcss.com/
+-->

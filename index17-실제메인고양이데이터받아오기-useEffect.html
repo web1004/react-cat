@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>고양이 가라사대</title>
+  </head>
+  <style>
+    body {
+      text-align: center;
+    }
+    .main-card button {
+      position: relative;
+      left: -45px;
+      bottom: 15px;
+    }
+    .favorites {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .ts{
+      color: red;
+    }
+  </style>
+  <body>
+    <div id="app"></div>
+
+
+
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <script type="text/babel">
+      const jsonLocalStorage = {
+        setItem: (key, value) => {
+          localStorage.setItem(key, JSON.stringify(value));
+        },
+        getItem: (key) => {
+          return JSON.parse(localStorage.getItem(key));
+        },
+      };
+
+      const fetchCat = async (text) => {
+        const OPEN_API_DOMAIN = "https://cataas.com";
+        const response = await fetch(`${OPEN_API_DOMAIN}/cat/says/${text}?json=true`);
+        const responseJson = await response.json();
+        return `${OPEN_API_DOMAIN}/${responseJson.url}`;
+      };
+      
+      const Title = (props) => {
+        return(
+          <h1>{props.children}</h1>
+        );
+      };
+
+      const Form = ({updateMainCat}) => {  
+        const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
+        const [value, setValue] = React.useState('');  
+        const [errorMessage, setErrorMessage] = React.useState("");
+        function handleInputChange(e){
+          const userValue = e.target.value;
+          setErrorMessage("");
+
+          if(includesHangul(userValue)){
+            setErrorMessage("한글은 입력할 수 없습니다.");
+          }
+
+          setValue(userValue.toUpperCase());
+        }
+
+        function handleFormSubmit(e){
+          e.preventDefault();
+          setErrorMessage("");
+
+          if(value ===""){
+            setErrorMessage("빈 값으로 만들 수 없습니다.");
+            return; 
+          }
+          updateMainCat(value); 
+        }
+
+        return(
+          <form onSubmit={handleFormSubmit}>
+            <input 
+              type="text" 
+              name="name" 
+              placeholder="영어 대사를 입력해주세요"
+              value={value}
+              onChange={handleInputChange}
+              />
+            <button type="submit">생성</button>
+            <p className="ts">{errorMessage}</p> 
+          </form>
+        )
+      };
+
+      function CatItem(props) {
+        return(
+          <li>
+            <img src={props.img} style={{width:"150px"}}/>
+          </li>
+        );
+      };
+
+      function Favorites({favorites}) {
+        return(
+          <ul className="favorites">
+            {favorites.map((cat) => (
+              <CatItem img={cat} key={cat} />
+            ))}
+          </ul>
+        );
+      };
+
+      const MainCard = ({img, onHeartClick}) => { 
+        return (
+          <div className="main-card">
+            <img src={img} alt="고양이" width="400"/>
+            <button onClick={onHeartClick}>🤍</button>
+          </div>
+        );
+      };
+
+      const App =() => {
+        const CAT1 = "https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react";
+        const CAT2 = "https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/inflearn";
+        const CAT3 = "https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript";
+
+        const [counter, setCounter] = React.useState(jsonLocalStorage.getItem("counter"));
+        const [mainCat, setMainCat] = React.useState(CAT1); 
+        const [favorites, setFavorites] = React.useState(jsonLocalStorage.getItem("favorites") || []);
+
+        //(1)추가
+        async function setInitialCat() {
+          const newCat = await fetchCat("First cat");  
+          setMainCat(newCat);
+        }
+
+        /* useEffect 
+        App컴포넌트안에 있는 모든 코드들이 다 새로 불린다.
+        UI가 바뀔때마다 호출하는것이 아니고 내가 원하는 시점에서만 불리게 하고 싶다 할때 사용함
+        기본적으로 useEffect는 UI가 업데이트될때마다 찍히게 맞지만,
+        *2번째 인자를 이용해서 함수가 불리는 순간들을 제한을 시킬수 있다.
+        React.useEffect(() => {
+          setInitialCat();
+        },[counter]);
+        ->counter 변수가 바뀔때마다 부른다.(처음 한번만 찍히고 바꾸지않기 때문에)
+        */
+        //setInitialCat();  //(2)콘솔에서 확인하면 계속 불려지고 있음
+        //(3)
+        React.useEffect(() => {
+          setInitialCat();
+        }, []); //빈배열일때(컴포넌트가 맨처음에 나타날때만 불린다.)
+
+        async function updateMainCat(value){  
+          const newCat = await fetchCat(value);  
+          setMainCat(newCat);  
+          const nextCounter = counter +1;
+          setCounter(nextCounter);
+          jsonLocalStorage.setItem("counter", nextCounter); 
+        }
+
+        function handleHeartClick(){ 
+          const nextFavorites = [...favorites, mainCat];
+          setFavorites(nextFavorites); 
+          jsonLocalStorage.setItem("favorites", nextFavorites);
+        }
+
+        return(
+          <div>
+            <Title>{counter}번째 고양이 가라사대</Title>
+            <Form updateMainCat={updateMainCat}/> 
+            <MainCard img={mainCat} onHeartClick = {handleHeartClick}/> 
+            <Favorites favorites = {favorites}/>
+          </div>
+        );     
+      };    
+
+
+      const cat = document.querySelector('#app');
+      ReactDOM.render(<App/>, cat);
+
+    </script>
+  </body>
+</html>
+
+<!-- 
+*Open API 공유주소
+https://github.com/public-apis/public-apis
+
+*사용하려는 Cat API
+https://cataas.com/#/
+
+
+*정리하자면.....
+리액트 컴포넌트 안에 있는 코드는 기본적으로 UI가 새로 업데이트 될때마다 계속 불린다.
+다만 계속 불리는 거를 내가 어떤 상태가 업데이트 될때만 불려라 제한을 하고 싶을때는
+useEffect 의 2번째 인자로 배열을 넘기고 내가 원하는 상태를 넘겨주면 된다.
+만약에 상태변화 아무것도 상관없이  맨 처음 앱이 생성되었을때만 호출하고 싶을때는 빈 배열을 넣어주면 된다.
+-->

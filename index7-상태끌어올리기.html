@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>고양이 가라사대</title>
+  <style>
+    body {
+      text-align: center;
+    }
+    .main-card button {
+      position: relative;
+      left: -45px;
+      bottom: 15px;
+    }
+    .favorites {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app"></div>
+
+
+  <!-- Script CDN -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <script type="text/babel">
+
+    const Title = (props) => {
+      return(
+        <h1>{props.children}</h1>
+      );
+    };
+
+    const Form = ({handleFormSubmit}) => { //수정(부모로부터 함수를 통째로 인자로 받음)
+      /*자식에 있는 상태를 부모로 끌어올린다. 
+      const [counter, setCounter] = React.useState(1);
+      console.log("카운터", counter); */
+
+      /*상태를 옮겼으니 setCounter,counter도 없는 상태이므로 부모App에 옮김      
+      function handleFormSubmit(event){
+        event.preventDefault();
+        console.log("폼 전송됨");
+        setCounter(counter + 1);
+      } */
+
+      return(
+        <form onSubmit={handleFormSubmit}>
+          <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
+          <button type="submit">생성</button>
+        </form>
+      );
+    };
+
+    const CatItem = (props) => {
+      return(
+        <li>
+          <img src={props.img} style={{width:"150px"}} />
+        </li>
+      );
+    };
+    
+    const Favorites = () => {
+      return(
+        <ul className="favorites">
+          <CatItem img="https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/inflearn"/>
+          <CatItem img="https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript"/> 
+        </ul>
+      );
+    };
+
+    const MainCard = ({img}) => {
+      function handleHeartClick(){
+        console.log("하트 눌렀음");
+      }
+      function handleHeartMouseOver(){
+        console.log("하트 스쳐 지나감");
+      }
+
+      return(
+        <div className="main-card">
+          <img src={img} alt="고양이" style={{width:"400px"}} />
+          <button onClick={handleHeartClick} onMouseOver={handleHeartMouseOver}>🤍</button>
+        </div>
+      );
+    };
+
+    //상태를 쓰려면 지금은 엘리먼트므로 컴포넌트로 변경해야 함
+    /* const app =(
+      <div>
+        <Title>1번째 고양이 가라사대</Title>
+        <Form/>
+        <MainCard img="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react"/>
+        <Favorites/>
+      </div>
+    ); */
+
+    const App =() => {
+      const [counter, setCounter] = React.useState(1);
+      console.log("카운터", counter);
+
+      function handleFormSubmit(event){
+        event.preventDefault();
+        console.log("폼 전송됨");
+        setCounter(counter + 1);
+      }
+
+      return(
+        <div>
+          <Title>{counter}번째 고양이 가라사대</Title> {/*수정*/}
+          <Form handleFormSubmit={handleFormSubmit}/> {/*수정*/}
+          <MainCard img="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react"/>
+          <Favorites/>
+        </div>
+      );
+    };
+
+    const cat = document.querySelector('#app');
+    //ReactDOM.render(app, cat);
+    ReactDOM.render(<App/>, cat);
+  </script>
+</body>
+</html>
+
+<!-- 
+*상태 끌어올리기(lifting state up) : 자식컴포넌트 안에서만 쓰이던 상태를 상위컴포턴트(부모)에서 같이 쓰고 싶을때
+상태를 생성하고 조작하는데 성공했으니 그렇게 만든 카운터 상태를 화면에 보여지도록 만들어본다.
+문제:카운터상태를 그려주고 싶은 공간이  title,form 공간이다.
+지금은 자식쪽에 있으니 부모쪽에 넣어서 자식2곳이 둘다 적용될수 있도록 해야 함
+-->

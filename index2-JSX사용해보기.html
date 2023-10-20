@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>고양이 가라사대</title>
+  <style>
+
+  </style>
+</head>
+<body>
+
+  <div id="app"></div>
+
+  <!-- <h1>1번째 고양이 가라사대</h1>
+    <form>
+      <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
+      <button type="submit">생성</button>
+    </form>
+    <div class="main-card">
+      <img
+        src="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react"
+        alt="고양이"
+        width="400"
+      />
+      <button>🤍</button>
+    </div>
+    <ul class="favorites">
+      <li>
+        <img
+          src="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react"
+          alt="고양이"
+        />
+      </li>
+      <li>
+        <img
+          src="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react"
+          alt="고양이"
+        />
+      </li>
+      <li>
+        <img
+          src="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react"
+          alt="고양이"
+        />
+      </li>
+    </ul> -->
+
+  <!-- Script CDN -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <!-- Babel : 최신 문법을 브라우저가 이해할 수 있는 Javascript로 통역 -->
+
+  <script type="text/babel">
+
+    const title = (
+      <h1>1번째 고양이 가라사대</h1>
+    );
+
+    const form =(
+      <form>
+        <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
+        <button type="submit">생성</button>
+      </form>
+    );
+
+    const catItem = (
+      <li>
+        <img src="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react" alt="고양이"/>
+      </li>
+    );
+    
+    /* const favorites = (
+      <ul class="favorites">
+        <li>
+          <img
+            src="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react"
+            alt="고양이"
+          />
+        </li>
+        <li>
+          <img
+            src="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react"
+            alt="고양이"
+          />
+        </li>
+        <li>
+          <img
+            src="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react"
+            alt="고양이"
+          />
+        </li>
+      </ul>
+    ); */
+
+    const favorites = (
+      <ul class="favorites">
+        {catItem}
+        {catItem}
+        {catItem}
+      </ul>
+    );
+
+    const mainCard = (
+      <div class="main-card">
+        <img
+          src="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react"
+          alt="고양이"
+          width="400"
+        />
+        <button>🤍</button>
+      </div>
+    );
+
+    //최상위태그만 뿌릴수 있어서 div로 한번 더 감싼다.
+    const app =(
+      <div>
+        {title}
+        {form}
+        {mainCard}
+        {favorites}
+      </div>
+    );
+
+    const cat = document.querySelector('#app');
+    //ReactDOM.render(catItem, cat);
+    //ReactDOM.render(favorites, cat);
+    ReactDOM.render(app, cat);
+  </script>
+</body>
+</html>

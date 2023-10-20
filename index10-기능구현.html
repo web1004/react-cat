@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>고양이 가라사대</title>
+  <style>
+    body {
+      text-align: center;
+    }
+    .main-card button {
+      position: relative;
+      left: -45px;
+      bottom: 15px;
+    }
+    .favorites {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app"></div>
+
+
+  <!-- Script CDN -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <script type="text/babel">
+
+    const Title = (props) => {
+      return(
+        <h1>{props.children}</h1>
+      );
+    };
+
+    const Form = ({handleFormSubmit}) => { 
+      return(
+        <form onSubmit={handleFormSubmit}>
+          <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
+          <button type="submit">생성</button>
+        </form>
+      );
+    };
+
+    const CatItem = (props) => {
+      return(
+        <li>
+          <img src={props.img} style={{width:"150px"}} />
+        </li>
+      );
+    };
+    
+    const Favorites = ({favorites}) => { //(2-3)부모에서 넘긴 favorites을 받아줌
+      //(2-4)정적으로 생성한 리스트는 삭제
+      //const CAT1 = "https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react";
+      //const CAT2 = "https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/inflearn";
+      //const CAT3 = "https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript";
+      //const cats = [CAT1, CAT2];
+
+      return(
+        <ul className="favorites">
+          {favorites.map((cat) => ( /*(2-5)수정*/
+              <CatItem img={cat} key={cat} />
+          ))}
+        </ul>
+      );
+    };
+
+    //(1)이벤트를 부모로 끌어올리기
+    const MainCard = ({img,handleHeartClick}) => { //(1-4)넘겨준 prop을 받아준다.
+      /*(1-1)상위 부모 컴포넌트로 올림 
+      function handleHeartClick(){
+        console.log("하트 눌렀음");
+      } */
+      // function handleHeartMouseOver(){
+      //   console.log("하트 스쳐 지나감");
+      // }
+
+      return(
+        <div className="main-card">
+          <img src={img} alt="고양이" style={{width:"400px"}} />
+          <button onClick={handleHeartClick}>🤍</button>
+        </div>
+      );
+    };
+
+    //(2)하트를 클릭했을때(MainCard) 리스트에 고양이가 추가되어야 하므로 고양이 리스트도 동적으로 관리 -> favorites상태추가 
+    const App =() => {
+      const CAT1 = "https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react";
+      const CAT2 = "https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/inflearn";
+      const CAT3 = "https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript";
+
+      const [counter, setCounter] = React.useState(1);
+      const [mainCat, setMainCat] = React.useState(CAT1);
+      const [favorites, setFavorites] = React.useState([CAT1,CAT2]);  {/*(2-1)상태추가*/}
+
+      console.log("카운터", counter);
+
+      function handleFormSubmit(event){
+        event.preventDefault();
+        console.log("폼 전송됨");
+        setCounter(counter + 1);
+        setMainCat(CAT2);
+      }
+
+      //(1-2)부모컴포넌트로 이동
+      function handleHeartClick(){
+        console.log("하트 눌렀음");
+        setFavorites([...favorites,CAT3]); //(3)하트를 눌렀을때 고양이 하나를 추가
+      }
+
+      return(
+        <div>
+          <Title>{counter}번째 고양이 가라사대</Title> 
+          <Form handleFormSubmit={handleFormSubmit} /> 
+          <MainCard img={mainCat} handleHeartClick = {handleHeartClick}/> {/* (1-3)prop으로 넘겨주기*/}   
+          <Favorites favorites = {favorites}/> {/*(2-2)상태의 favorites배열을 넘겨줌*/}
+        </div>
+      );
+    };
+
+    const cat = document.querySelector('#app');
+    ReactDOM.render(<App/>, cat);
+  </script>
+</body>
+</html>
+<!-- 
+*하트버튼을 눌렀을때 고양이 리스트에 하나가 추가되고, Favorites에 고양이 이미지가 하나 추가되는것을 만들어본다.
+상태,props,이벤트,리스트 등을 이용한다.
+-->
